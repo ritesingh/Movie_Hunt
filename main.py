@@ -3,6 +3,11 @@ from requests import get
 from bs4 import BeautifulSoup
 
 years=[str(i) for i in range(2000,2018)]
+movies=[]
+names=[]
+rating=[]
+metascore=[]
+release_year=[]
 for page in years:
     #movies from the year 2018-2019 with all pages 
     val=str(page)
@@ -17,29 +22,50 @@ for page in years:
         first_movie=movies[i]
 
         #movie name 
-        print("name= "+first_movie.h3.a.text)
+        names.append(first_movie.h3.a.text)
 
         #movie year
-        print("Releasing Year= "+first_movie.h3.find('span','lister-item-year text-muted unbold').text)
+        release_year.append(first_movie.h3.find('span','lister-item-year text-muted unbold').text)
 
         #movie rating
-        print("Movie Rating: "+first_movie.strong.text)
+        rating.append(first_movie.strong.text)
 
         #metascore rating
-        print("Metascore Rating: ",end="")
+       
         if(first_movie.find('span',class_=['metascore favorable','metascore mixed','metascore unfavorable'])!=None):
-            print(first_movie.find('span',class_=['metascore favorable','metascore mixed','metascore unfavorable']).text)
+            metascore.append(first_movie.find('span',class_=['metascore favorable','metascore mixed','metascore unfavorable']).text)
+    
+         
 
-        #cast names
-        dicta=html.find(class_='lister-item-content')
-        dictb=dicta.findAll('a',href=True)
-        name={a.next:a.next.next for a in dictb}
-        key=name.keys()
-        print("Cast Name: ")
-        for i in key:
-            i=str(i)
-            regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')     
-            if(regex.search(i) == None): 
-                print(i) 
+#cast names
+for page in years:
+    #movies from the year 2018-2019 with all pages 
+    response=get("http://www.imdb.com/search/title?release_date="+val+"&sort=num_votes,desc&page=1")
+    html=BeautifulSoup(response.content,'html.parser')
+    cast=html.select("div.lister-item-content")
+    for i in range(len(cast)):
+        x=(cast[i].findAll('p'))
+        d=x[2].text
+        idx=d.find("Stars:")
+        pro=d[idx+6:]
+        mlist=pro.split("\n")
+        mlist="".join(mlist).strip().split(',')
+        org_list=[]
+        for i in mlist:
+            org_list.append(i.strip())
+        movies.append(org_list)
 
-        print("\n\n")
+
+main=[]
+for i in range(len(names)):
+    jdict={}
+    jdict['name']=names[i]
+    jdict['rating']=rating[i]
+    jdict['cast']=movies[i]
+    jdict['metascore']=metascore[i]
+    jdict['releasing_year']=release_year[i]
+    main.append(jdict)
+
+
+
+print(main)
