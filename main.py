@@ -1,9 +1,10 @@
 import re
 from requests import get
+from pymongo import MongoClient
 from bs4 import BeautifulSoup
 
 years=[str(i) for i in range(2000,2018)]
-movies=[]
+
 names=[]
 rating=[]
 metascore=[]
@@ -30,12 +31,10 @@ for page in years:
         #movie rating
         rating.append(first_movie.strong.text)
 
-        #metascore rating
-       
-        if(first_movie.find('span',class_=['metascore favorable','metascore mixed','metascore unfavorable'])!=None):
-            metascore.append(first_movie.find('span',class_=['metascore favorable','metascore mixed','metascore unfavorable']).text)
+
     
-         
+
+movies=[]
 
 #cast names
 for page in years:
@@ -62,10 +61,14 @@ for i in range(len(names)):
     jdict['name']=names[i]
     jdict['rating']=rating[i]
     jdict['cast']=movies[i]
-    jdict['metascore']=metascore[i]
     jdict['releasing_year']=release_year[i]
     main.append(jdict)
 
+db=MongoClient().database
+data=db.test
+for i in main:
+    data.insert_one(i)
+
+    
 
 
-print(main)

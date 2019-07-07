@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>
+Movie Details
+</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Start your development with a Design System for Bootstrap 4.">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+</head>
+<body>
+        <div class="card-body py-12">
+                <h6 class="text-primary text-uppercase">Movie Details</h6>
+                <p class="description mt-3"><strong>Name</strong>  : {{name}}</p> 
+                <p class="description mt-3"><strong>Releasing year</strong>     : {{releasing_year}}</p>    
+                <p class="description mt-3"><strong>Rating</strong> : {{rating}}</p>
+                <p class="description mt-3"><strong>Cast</strong>   :{%for i in cast%} {{i}},{% endfor %}</p>
+        </div>
+</body>
+</html>
